@@ -1,0 +1,71 @@
+/* Style for the question item container */
+.question-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Style for the status indicator */
+.status-indicator {
+    margin-right: 10px;
+}
+
+/* Add a green check for completed items */
+.status-indicator.completed::before {
+    content: '✓';
+    color: green;
+}
+
+/* Style for the topic label */
+.topic-label {
+    flex-grow: 1;
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+/* Style for the difficulty tag */
+.difficulty-tag {
+    padding: 5px 10px;
+    margin-right: 10px;
+    border-radius: 15px;
+    color: white;
+    font-size: 0.75rem;
+}
+
+/* Difficulty-specific colors */
+.difficulty-tag.easy {
+    background-color: #5cb85c; /* Green */
+}
+
+.difficulty-tag.medium {
+    background-color: #f0ad4e; /* Amber */
+}
+
+.difficulty-tag.hard {
+    background-color: #d9534f; /* Red */
+}
+
+/* Style for the category tag */
+.category-tag {
+    padding: 5px 10px;
+    border-radius: 15px;
+    color: white;
+    font-size: 0.75rem;
+}
+
+/* Category-specific colors */
+.category-tag.behavioral {
+    background-color: #5bc0de; /* Light Blue */
+}
+
+.category-tag.situational {
+    background-color: #337ab7; /* Blue */
+}
+
+.category-tag.value-based {
+    background-color: #777; /* Dark Gray */
+}

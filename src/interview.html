@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.js"></script>
+    <title>Интервью</title>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='interview.css') }}">
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-box interviewer">
+            <p class="chat-header">Interviewer</p>
+            <div class="chat-content" id="interviewer-chat"></div>
+        </div>
+
+        <div class="chat-box copilot">
+            <p class="chat-header copilot-header">Copilot</p>
+            <div class="chat-content" id="copilot-chat"></div>
+        </div>
+
+        <div class="chat-box interviewee">
+            <p class="chat-header">Interviewee</p>
+            <div class="chat-content" id="interviewee-chat"></div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='interview.js') }}"></script>
+</body>
+</html>

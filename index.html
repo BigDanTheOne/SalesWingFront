@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Тест микрофона и захвата вкладки</title>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+
+
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="button-container">
+    <button id="mic-button" class="custom-button custom-button-red" onclick="checkMicrophone()">Подключить микрофон
+    </button>
+    <button id="tab-button" class="custom-button custom-button-red" onclick="captureTab()">Подключиться к интервью
+    </button>
+    <button id="interview-button" class="custom-button custom-button-disabled"
+            onclick="window.location.href='/interview'" disabled>Начать интервью
+    </button>
+
+</div>
+
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

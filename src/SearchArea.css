@@ -1,0 +1,54 @@
+.search-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centers the children horizontally */
+    background-color: #f8f8f8; /* Light grey background */
+    border-radius: 10px; /* Rounded corners for the container */
+    font-family: 'Arial', sans-serif; /* Assuming Arial font is used */
+    color: #333; /* Dark grey font color */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft box shadow */
+    width: 80%; /* Adjust width as per your design */
+    margin: 20px auto; /* Center the search area with automatic horizontal margins */
+}
+
+.dropdown-container {
+    display: flex;
+    justify-content: space-between; /* Space out the dropdowns evenly */
+    width: 100%; /* Full width */
+    padding: 10px; /* Padding inside the dropdown container */
+}
+
+.search-dropdown {
+    flex: 1; /* Each dropdown will take equal space */
+    margin: 5px; /* Adjust space between dropdowns */
+    padding: 10px 15px; /* Padding inside the dropdowns */
+    border: 1px solid #ccc; /* Light grey border */
+    border-radius: 5px; /* Slightly rounded corners for dropdowns */
+    background-color: #fff; /* White background for dropdowns */
+    -webkit-appearance: none; /* Removes default styling on dropdown in WebKit browsers */
+    -moz-appearance: none; /* Removes default styling on dropdown in Firefox browsers */
+    appearance: none; /* Standard way to remove default dropdown styling */
+}
+
+.input-container {
+    display: flex;
+    width: 100%; /* Full width */
+    padding: 10px; /* Padding inside the input container */
+}
+
+.search-input {
+    flex: 1; /* Allows the input to grow and fill the space */
+    margin: 5px; /* Adjust space around the input */
+    padding: 10px 15px; /* Padding inside the input */
+    border: 1px solid #ccc; /* Light grey border */
+    border-radius: 5px; /* Slightly rounded corners for the input */
+    background-color: #fff; /* White background for the input */
+}
+
+/* Focus and hover styles for interactivity */
+.search-dropdown:focus,
+.search-input:focus,
+.search-dropdown:hover,
+.search-input:hover {
+    border-color: #888; /* Darker border color for focus/hover state */
+}
