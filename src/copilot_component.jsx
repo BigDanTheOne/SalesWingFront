@@ -1,5 +1,8 @@
 import React, {useState, useEffect, useRef} from 'react';
+import io from "socket.io-client";
+
 import './style.css';
+import { useData } from './DataContext';
 import ChatContainer from "./interviewBohonko";
 var MediaStreamRecorder = require('msr');
 
@@ -15,36 +18,103 @@ const Interview = (props) => {
 
     const [disabled, setDisabled] = useState(true);
     const [isInterview, setIsInterview] = useState(false);
-    const { socket, userId, micTranscription, tabTranscription, copilotFeedback } = props;
+    const [socket, setSocket] = useState(null);
+    const {userId} = props;
     const tabAudioChunksRef = useRef([]);
     const micAudioChunksRef = useRef([]);
     const tabAudioRecorderRef = useRef(null);
     const micAudioRecorderRef = useRef(null);
+    const { data, setData } = useData();
+    const [micTranscription, setMicTranscription] = useState(['']);
+    const [tabTranscription, setTabTranscription] = useState(['']);
+    const [copilotFeedback, setCopilotFeedback] = useState(['']);
 
+    useEffect(() => {
+        isMicConnected = false;
+        isTabConnected = false;
+    }, []);
 
+    useEffect(() => {
+        if (socket == null) {
+            const socket_ = io('http://copilotapi.onrender.com', {
+                transports: ['websocket', 'polling'],
+                query: data['session_id'] ? { session_id: data['session_id'] } : {}
+            });
+            socket_.on('session_id', (session_id) => {
+                setData({rowData: data.rowData, session_id: session_id});
+                console.log("Connection established, user_id: ", session_id);
+            });
+            setSocket(socket_);
+        }
+    }, [])
+    useEffect(() => {
+        if (socket != null) {
+            socket.on('mic_transcript', (data_) => {
+                console.log("Mic from server:", data_.response);
+                const length = data_.len;
+                let newMic = [...micTranscription];
+                if (length > newMic.length){
+                    newMic.push('');
+                }
+                newMic = newMic.map((c, i) => {
+                    if (i === length - 1) {
+                        return data_.response;
+                    } else {
+                        return c;
+                    }
+                });
+                console.log(newMic, length);
+                setMicTranscription(newMic);
+                console.log("Real mic state value: ", micTranscription);
+            });
+            socket.on('tab_transcript', (data_) => {
+                console.log("Tab from server:", data_.response);
+                const length = data_.len;
+                let newTab = [...tabTranscription];
+                if (length > newTab.length){
+                    newTab.push('')
+                }
+                newTab = newTab.map((c, i) => {
+                    if (i === length - 1) {
+                        return data_.response;
+                    } else {
+                        return c;
+                    }
+                });
+                console.log(newTab, length);
+                setTabTranscription(newTab);
+                console.log("Real tab state value: ", tabTranscription);
+            });
+            socket.on('copilot', (data_) => {
+                console.log("Tab from server:", data_.response);
+                const length = data_.len;
+                let newFeedback = [...copilotFeedback];
+                if (length > newFeedback.length){
+                    newFeedback.push('')
+                }
+                newFeedback = newFeedback.map((c, i) => {
+                    if (i === length - 1) {
+                        return data_.response;
+                    } else {
+                        return c;
+                    }
+                });
+                console.log(newFeedback, length);
+                setCopilotFeedback(newFeedback);
+                console.log("Real tab state value: ", tabTranscription);
+            });
+            // socket.on('feedback', (data_) => {
+            //     console.log("Feedback from server:", data_.response);
+            //     setFeedback(data_.response);
+            // });
+        }
+    }, [socket, tabTranscription, micTranscription, copilotFeedback]);
 
-    function startRecording(stream) {
-        console.log('Запись начинается');
-        recordedChunks = [];
-        let audioStream = stream;
-        let mediaRecorder = new MediaRecorder(audioStream);
-
-        mediaRecorder.ondataavailable = function(e) {
-            if (e.data.size > 0) {
-                recordedChunks.push(e.data);
-                // socket.emit('audio_data', e.data); // TODO
-            }
-        };
-
-        mediaRecorder.onstop = function() {
-            // const blob = new Blob(recordedChunks, { 'type' : 'audio/webm' });
-            // socket.emit('audio_data', blob);
-            console.log("Аудиоданные отправлены");
-        };
-
-        // Начало записи с созданием чанков каждую секунду
-        mediaRecorder.start(10000);
-    }
+    useEffect(() => {
+        console.log("Updated mic state value: ", micTranscription);
+        console.log("Updated mic state value: ", tabTranscription);
+        console.log("Updated mic state value: ", copilotFeedback);
+    }, [micTranscription, tabTranscription, copilotFeedback]);
 
     function updateInterviewButton() {
         const interviewButton = document.getElementById('interview-button');
@@ -105,20 +175,23 @@ const Interview = (props) => {
     };
 
     const handleInterviewClick = () => {
+        socket.emit('new_session', data['session_id'])
         tabAudioRecorderRef.current.ondataavailable = async (blob) => {
-            socket.emit('audio_data_tab', { audio: blob, user_id: userId });
-            tabAudioChunksRef.current.push(blob);
-            console.log(blob)
+            socket.emit('audio_data_tab', { audio: blob }, () => {
+                tabAudioChunksRef.current.push(blob);
+                console.log(blob)
+            });
+
         };
         micAudioRecorderRef.current.ondataavailable = async (blob) => {
-            socket.emit('audio_data_mic', { audio: blob, user_id: userId });
-            micAudioChunksRef.current.push(blob);
-            console.log(blob)
+            socket.emit('audio_data_mic', { audio: blob }, () => {
+                micAudioChunksRef.current.push(blob);
+                console.log(blob);
+            });
+
         };
-
-
-        micAudioRecorderRef.current.start(1000);
-        tabAudioRecorderRef.current.start(1000);
+        micAudioRecorderRef.current.start(100);
+        tabAudioRecorderRef.current.start(100);
         setIsInterview(true);
 
     };

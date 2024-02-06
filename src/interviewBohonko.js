@@ -9,11 +9,11 @@ const ChatContainer = (props) => {
         // <div>
             <div className="chat-container">
                 <div className="chat-box">
-                    <p className="chat-header">Interviewer</p>
+                    <p className="chat-header">Покупатель</p>
                     <div className="chat-content" id="interviewer-chat">
                         {tabTranscription.map((message, index) => (
                             <div key={index}>
-                                <strong>You: </strong>
+                                <strong>Покупатель: </strong>
                                 <span>{message}</span>
                             </div>
                         ))}
@@ -31,11 +31,11 @@ const ChatContainer = (props) => {
                     </div>
                 </div>
                 <div className="chat-box">
-                    <p className="chat-header">Interviewee</p>
+                    <p className="chat-header">Вы</p>
                     <div className="chat-content" id="interviewee-chat">
                         {micTranscription.map((message, index) => (
                             <div key={index}>
-                                <strong>Interviewee: </strong>
+                                <strong>Вы: </strong>
                                 <span>{message}</span>
                             </div>
                         ))}

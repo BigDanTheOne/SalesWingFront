@@ -69,7 +69,7 @@ const AudioRecorder = (props) => {
                 if (event.data.size > 0) {
                     // socket.emit('audio_data', event.data);
                     audioChunksRef.current.push(event.data);
-                    mediaRecorderRef.current.pause();
+                    // mediaRecorderRef.current.pause();
                     console.log(event.data)
                 }
             };

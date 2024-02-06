@@ -1,7 +1,7 @@
 import SearchArea from "./SearchArea";
 import Interview from "./copilot_component";
 import ChatContainer from './interviewBohonko'
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -25,7 +25,6 @@ import CssBaseline from '@mui/material/CssBaseline';
 import Toolbar from '@mui/material/Toolbar';
 import Row from './Row'
 import './App.css';
-import io from "socket.io-client";
 
 
 let rows = jsonQuestions.map(({ _id, title, fullQuestion, tip, difficulty, companies, category }) => ({ _id,  title, fullQuestion, tip, difficulty, companies, category  }));
@@ -36,12 +35,9 @@ const drawerWidth = 240;
 export default function MainApp() {
     const [selectedOptions, setSelectedOptions] = useState({ Difficulty: 'All',
         Category: 'All',  Status: 'All', Companies: 'All',JobType: 'All' });
-    const [socket, setSocket] = useState(null);
     const [transcription, setTranscription] = useState('');
     const [feedback, setFeedback] = useState('');
-    const [micTranscription, setMicTranscription] = useState(['']);
-    const [tabTranscription, setTabTranscription] = useState(['']);
-    const [copilotFeedback, setCopilotFeedback] = useState(['']);
+
 
 
 
@@ -72,97 +68,7 @@ export default function MainApp() {
         setSelectedOptions(prev => ({ ...prev, [optionType]: value }));
     };
 
-    useEffect(() => {
-        if (socket == null) {
-            const socket_ = io('http://127.0.0.1:5000', {transports: ['websocket', 'polling']});
-            socket_.on('connected', (userId) => {
-                setData({rowData: data.rowData, userId: userId});
-                console.log("Connection established, user_id: ", userId);
-            });
-            setSocket(socket_);
-        }
-
-    }, [])
-
-    useEffect(() => {
-        if (socket != null) {
-            socket.on('mic_transcript', (data_) => {
-                console.log("Mic from server:", data_.response);
-                const length = data_.len;
-                let newMic = [...micTranscription];
-                if (length > newMic.length){
-                    newMic.push('');
-                }
-                newMic = newMic.map((c, i) => {
-                    if (i === length - 1) {
-                        return data_.response;
-                    } else {
-                        return c;
-                    }
-                });
-                console.log(newMic, length);
-                setMicTranscription(newMic);
-                console.log("Real mic state value: ", micTranscription);
-            });
-            socket.on('tab_transcript', (data_) => {
-                console.log("Tab from server:", data_.response);
-                const length = data_.len;
-                let newTab = [...tabTranscription];
-                if (length > newTab.length){
-                    newTab.push('')
-                }
-                newTab = newTab.map((c, i) => {
-                    if (i === length - 1) {
-                        return data_.response;
-                    } else {
-                        return c;
-                    }
-                });
-                console.log(newTab, length);
-                setTabTranscription(newTab);
-                console.log("Real tab state value: ", tabTranscription);
-            });
-            socket.on('copilot', (data_) => {
-                console.log("Tab from server:", data_.response);
-                const length = data_.len;
-                let newFeedback = [...copilotFeedback];
-                if (length > newFeedback.length){
-                    newFeedback.push('')
-                }
-                newFeedback = newFeedback.map((c, i) => {
-                    if (i === length - 1) {
-                        return data_.response;
-                    } else {
-                        return c;
-                    }
-                });
-                console.log(newFeedback, length);
-                setCopilotFeedback(newFeedback);
-                console.log("Real tab state value: ", tabTranscription);
-            });
-            socket.on('feedback', (data_) => {
-                console.log("Feedback from server:", data_.response);
-                setFeedback(data_.response);
-
-            });
-        }
-    }, [socket, tabTranscription, micTranscription, copilotFeedback]);
-
-    useEffect(() => {
-        console.log("Updated mic state value: ", micTranscription);
-        console.log("Updated mic state value: ", tabTranscription);
-        console.log("Updated mic state value: ", copilotFeedback);
-    }, [micTranscription, tabTranscription, copilotFeedback]);
-
-    useEffect(() => {
-        console.log("second hook")
-        console.log(data)
-        if (socket && !data.userId) {
-            console.log("joining")
-            socket.emit('join');
-        }
-    }, [socket]);
-
+    
     return (
         <DataProvider>
             <Router>
@@ -176,17 +82,17 @@ export default function MainApp() {
                         }}
                     >
                         <List>
-                            <ListItem button key={'Вопросы для интервью'} component={Link} to={`/`}>
+                            <ListItem button key={'AI sales тренажёр'} component={Link} to={`/`}>
                                 <ListItemIcon>
                                     <RadioButtonUncheckedIcon />
                                 </ListItemIcon>
-                                <ListItemText primary={'Вопросы для интервью'} />
+                                <ListItemText primary={'AI Sales тренажёр'} />
                             </ListItem>
-                            <ListItem button key={'Интервью Copilot'} component={Link} to={`/copilot`}>
+                            <ListItem button key={'Sales Copilot'} component={Link} to={`/copilot`}>
                                 <ListItemIcon>
                                     <RadioButtonUncheckedIcon />
                                 </ListItemIcon>
-                                <ListItemText primary={'Интервью Copilot'} />
+                                <ListItemText primary={'Sales Copilot'} />
                             </ListItem>
                         </List>
                     </Drawer>
@@ -218,11 +124,10 @@ export default function MainApp() {
                                     </TableContainer>
                                 }/>
                                 <Route  path="/question" element={
-                                    <InterviewQuestion setPassed={setPassed} socket={socket} transcription={transcription} feedback={feedback}/>
+                                    <InterviewQuestion setPassed={setPassed}  transcription={transcription} feedback={feedback}/>
                                 }/>
                                 <Route  path="/copilot" element={
-                                    <Interview socket={socket} userId={data.userId} micTranscription={micTranscription}
-                                               tabTranscription={tabTranscription} copilotFeedback={copilotFeedback}/>
+                                    <Interview/>
                                 }/>
                             </Routes>
                         </Container>
