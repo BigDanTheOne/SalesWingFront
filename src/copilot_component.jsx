@@ -36,7 +36,7 @@ const Interview = (props) => {
 
     useEffect(() => {
         if (socket == null) {
-            const socket_ = io('http://copilotapi.onrender.com', {
+            const socket_ = io('wss://copilotapi.onrender.com', {
                 transports: ['websocket', 'polling'],
                 query: data['session_id'] ? { session_id: data['session_id'] } : {}
             });
